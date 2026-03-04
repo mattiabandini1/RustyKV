@@ -1,5 +1,5 @@
 mod parser;
-use parser::{parse_command, Command};
+use parser::parse_command;
 
 fn main() {
     println!("---Rust-LSM started!---");
