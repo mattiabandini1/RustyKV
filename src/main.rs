@@ -1,16 +1,41 @@
 mod parser;
-use parser::parse_command;
+mod memtable;
+use parser::{parse_command, Command};
+use memtable::MemTable;
 
 fn main() {
-    println!("---Rust-LSM started!---");
 
-    let test_set = "    SET     user_3      password123     ";
-    let test_get = "get     user_3";
-    let test_fail = "DESTROY this db please!";
+    let mut db = MemTable::new();
 
-    println!("Test SET: {:?}", parse_command(test_set));
-    println!("Test GET: {:?}", parse_command(test_get));
-    println!("Test FAIL: {:?}", parse_command(test_fail));
+    let command_1 = "SET utente_99 super_segreto";
+    let command_2 = "GET utente_99";
 
-    println!("---End test---")
+    match parse_command(command_1) {
+        Command::Set(key, value) => {
+            db.set(key, value);
+            println!("key and value setted!");
+        },
+        Command::Get(key) => {
+            let result = db.get(&key);
+            println!("{:?}", result);
+        },
+        Command::Unknown => {
+            println!("Error! Command not valid.");
+        }
+    }
+
+    match parse_command(command_2) {
+        Command::Set(key, value) => {
+            db.set(key, value);
+            println!("key and value setted!");
+        },
+        Command::Get(key) => {
+            let result = db.get(&key);
+            println!("{:?}", result);
+        },
+        Command::Unknown => {
+            println!("Error! Command not valid.");
+        }
+    }
+
 }
