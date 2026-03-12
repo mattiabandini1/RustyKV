@@ -25,7 +25,7 @@ fn main() {
 
         let clear_input = input.trim();
 
-        if clear_input == "QUIT" {
+        if clear_input.to_uppercase() == "QUIT" {
             println!("Database shutdown in progress...");
             break;
         }
