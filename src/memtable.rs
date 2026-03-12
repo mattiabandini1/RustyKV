@@ -11,4 +11,8 @@ impl MemTable {
             storage: HashMap::new(),
         }
     }
+
+    pub fn set(&mut self, key: String, value: String) {
+        self.storage.insert(key, value);
+    }
 }
