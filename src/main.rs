@@ -41,7 +41,12 @@ fn main() {
             },
             Command::Get(key) => {
                 let result = db.get(&key);
-                println!("{:?}", result);
+                
+                match result {
+                    Some(value_found) => println!("{}", value_found),
+
+                    None => println!("Key not found!"),
+                }
             },
             Command::Unknown => {
                 println!("Error! Command not valid.");
