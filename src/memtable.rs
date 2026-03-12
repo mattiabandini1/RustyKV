@@ -15,4 +15,8 @@ impl MemTable {
     pub fn set(&mut self, key: String, value: String) {
         self.storage.insert(key, value);
     }
+
+    pub fn get(&self, key: &str) -> Option<&String> {
+        self.storage.get(key)
+    }
 }
