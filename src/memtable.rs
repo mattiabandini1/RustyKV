@@ -27,6 +27,10 @@ impl MemTable {
     }
 
     pub fn flush_to_disk(&self) {
-
+        let mut file = File::create("sstable.txt").expect("Errors creating file");
+        
+        for (key, value) in &self.storage {
+            writeln!(file, "{} = {}", key, value).expect("Errors writing in file");
+        }
     }
 }
