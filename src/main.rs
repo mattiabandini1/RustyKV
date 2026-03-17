@@ -6,6 +6,8 @@ mod memtable;
 use parser::{parse_command, Command};
 use memtable::MemTable;
 
+const FLUSH_THRESHOLD = 10_000;
+
 fn main() {
 
     let mut db = MemTable::new();
@@ -44,7 +46,7 @@ fn main() {
                 db.set(key, value);
                 println!("key and value setted!");
 
-                if db.len() >= 3 {
+                if db.len() >= FLUSH_THRESHOLD {
                     println!("MemTable full! Flush to disk in progress...");
                     db.flush_to_disk();
                     db = MemTable::new();
