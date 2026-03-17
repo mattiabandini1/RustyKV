@@ -27,6 +27,11 @@ fn main() {
 
         if clear_input.to_uppercase() == "QUIT" {
             println!("Database shutdown in progress...");
+
+            if db.len() > 0 {
+                db.flush_to_disk();
+            }
+
             break;
         }
 
