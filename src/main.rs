@@ -38,6 +38,14 @@ fn main() {
             Command::Set(key, value) => {
                 db.set(key, value);
                 println!("key and value setted!");
+
+                if db.len() >= 3 {
+                    println!("MemTable full! Flush to disk in progress...");
+                    db.flush_to_disk();
+                    db = MemTable::new();
+
+                    println!("Download completed. Memtable free!");
+                }
             },
             Command::Get(key) => {
                 let result = db.get(&key);
