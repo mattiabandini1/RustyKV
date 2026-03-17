@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
+use std::io::{BufRead, BufReader};
 
 pub struct MemTable {
     storage: HashMap<String, String>,
@@ -18,8 +19,26 @@ impl MemTable {
         self.storage.insert(key, value);
     }
 
-    pub fn get(&self, key: &str) -> Option<&String> {
-        self.storage.get(key)
+    pub fn get(&self, key: &str) -> Option<String> {
+        if let Some(value) = self.storage.get(key) {
+            return Some(value.clone());
+        }
+
+        if let Some(file) = File::open("sstable.txt").ok() {
+            let reader = BufReader::new(file);
+
+            for row_result in reader.lines() {
+                if let Ok(row) =  row_result {
+                    if let Some((key_saved, value_saved)) = row.split_once('=') {
+                        if key_saved == key {
+                            return Some(value_saved.to_string());
+                        }
+                    }
+                }
+            }
+        }
+
+        None
     }
 
     pub fn len(&self) -> usize {
@@ -30,7 +49,7 @@ impl MemTable {
         let mut file = File::create("sstable.txt").expect("Errors creating file");
         
         for (key, value) in &self.storage {
-            writeln!(file, "{} = {}", key, value).expect("Errors writing in file");
+            writeln!(file, "{}={}", key, value).expect("Errors writing in file");
         }
     }
 }
