@@ -68,4 +68,12 @@ mod tests {
         
         assert_eq!(result, Command::Unknown);
     }
+
+    #[test]
+    fn test_parse_set_incompleted() {
+        let input = "SET user1"; 
+        let result = parse_command(input);
+        
+        assert_eq!(result, Command::Unknown);
+    }
 }
