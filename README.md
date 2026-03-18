@@ -1,20 +1,30 @@
 # RustyKV 🦀
 
-**A Lightweight, LSM-Tree inspired Key-Value Store built in Rust.**
+**A Lightweight, LSM-Tree Inspired Key-Value Store Built in Rust.**
 
-RustyKV is an educational yet robust in-memory database with disk persistence. It implements the core mechanics of a **Log-Structured Merge-Tree (LSM)** architecture, the same engine powering industry giants like RocksDB and Cassandra.
+RustyKV is an educational key-value store with in-memory storage and disk persistence. It implements the core mechanics of a **Log-Structured Merge-Tree (LSM)** architecture — the same engine powering systems like RocksDB and Apache Cassandra.
 
-This project was built from scratch to explore Rust's memory safety (Borrow Checker), File I/O operations, and Enum-based command parsing.
+Built from scratch to explore Rust's ownership model, File I/O, and enum-based command parsing.
 
 ---
 
 ## ✨ Features
 
-* **Interactive REPL:** A fast, continuous command-line interface to interact with the database in real-time.
-* **MemTable (RAM Storage):** Immediate `O(1)` reads and writes using Rust's native `HashMap`.
-* **SSTable Persistence:** Automatic flushing to disk when the MemTable reaches a specific threshold, ensuring fast sequential writes.
-* **Cascading Reads:** Unified read logic that transparently checks the fast RAM cache first, and falls back to scanning the disk if the key is not in memory.
-* **Graceful Shutdown:** Safely flushes all remaining in-memory data to the disk upon exiting, guaranteeing zero data loss.
+- **Interactive REPL** — A continuous command-line interface for real-time interaction with the database.
+- **MemTable (In-Memory Storage)** — Fast `O(1)` reads and writes using Rust's `HashMap`.
+- **Append-Only SSTable Persistence** — When the MemTable reaches its capacity threshold, entries are flushed to an append-only `sstable.txt` file on disk, preserving write history.
+- **Cascading Reads** — On a cache miss, the engine scans the SSTable and returns the most recent value for the requested key, correctly handling multiple entries from successive flushes.
+- **Graceful Shutdown** — On `QUIT`, any remaining in-memory data is safely flushed to disk before exit.
+
+---
+
+## ⚠️ Current Limitations
+
+This is an educational project. The following known limitations reflect the early stage of the implementation:
+
+- **Sequential disk scan** — Disk reads perform a full linear scan of the SSTable. A production LSM-tree would use sorted, indexed SSTables to enable binary search. This is tracked in the roadmap.
+- **Single SSTable file** — All flushed data is appended to a single file. Compaction (merging and deduplication) is not yet implemented.
+- **No DELETE support** — Tombstone markers are not yet implemented.
 
 ---
 
@@ -22,57 +32,60 @@ This project was built from scratch to explore Rust's memory safety (Borrow Chec
 
 ### Prerequisites
 
-Make sure you have [Rust and Cargo](https://www.rust-lang.org/tools/install) installed on your system.
+Make sure you have [Rust and Cargo](https://www.rust-lang.org/tools/install) installed.
 
 ### Installation & Execution
 
-Clone the repository and run the project directly using Cargo:
-
 ```bash
-git clone https://github.com/YOUR_USERNAME/rusty-kv.git
+git clone https://github.com/mattiabandini1/RustyKV.git
 cd rusty-kv
 cargo run
+```
+
+### Running Tests
+
+```bash
+cargo test
 ```
 
 ---
 
 ## 💻 Usage
 
-Once the REPL starts, you can interact with the database using the following commands:
-
 ```text
 --- Rust-LSM Started ---
 Supported commands: SET <key> <value>, GET <key>, QUIT
 
 > SET user_1 admin
-key and value setted!
+Key and value successfully set!
 > SET server_port 8080
-key and value setted!
+Key and value successfully set!
 > GET user_1
 admin
 > GET unknown_key
-(nil)
+Key not found!
 > QUIT
-Shutting down database... Goodbye!
+Database shutdown in progress...
 ```
 
 ---
 
 ## 🏗️ Architecture
 
-The project is cleanly divided into modular components:
+The project is divided into three focused modules:
 
-* **parser.rs:** Safely sanitizes user input and converts raw strings into strongly-typed Command Enums.
-* **memtable.rs:** Manages the internal state (the HashMap) and handles File System I/O (BufReader and File) to read and write the `sstable.txt`.
-* **main.rs:** Acts as the orchestrator, running the REPL loop, tracking memory capacity, and triggering the disk flushes.
+- **`parser.rs`** — Parses raw user input into strongly-typed `Command` enums (`Get`, `Set`, `Unknown`). Fully unit-tested.
+- **`memtable.rs`** — Manages the in-memory `HashMap` and handles all File I/O: appending to the SSTable on flush and scanning it on disk reads.
+- **`main.rs`** — Orchestrates the REPL loop, tracks MemTable size, and triggers flushes when the threshold is reached.
 
 ---
 
-## 🗺️ Roadmap / Future Enhancements
+## 🗺️ Roadmap
 
-* [ ] **Tombstones:** Implement the DELETE command by writing tombstone markers to the SSTable.
-* [ ] **Compaction:** Create a background process to merge multiple SSTable files and clean up overwritten/deleted keys.
-* [ ] **Bloom Filters:** Optimize disk reads by checking a Bloom Filter before scanning the file system.
+- [ ] **Tombstones** — Implement `DELETE` via tombstone markers in the SSTable.
+- [ ] **Compaction** — Background process to merge SSTable files and remove stale/deleted entries.
+- [ ] **Bloom Filters** — Probabilistic structure to avoid unnecessary disk scans on missing keys.
+- [ ] **Sorted SSTables** — Sort keys on flush to enable binary search and eliminate linear scans.
 
 ---
 
