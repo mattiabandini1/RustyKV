@@ -38,7 +38,7 @@ Make sure you have [Rust and Cargo](https://www.rust-lang.org/tools/install) ins
 
 ```bash
 git clone https://github.com/mattiabandini1/RustyKV.git
-cd rusty-kv
+cd RustyKV
 cargo run
 ```
 
