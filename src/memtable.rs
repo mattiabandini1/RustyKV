@@ -27,14 +27,20 @@ impl MemTable {
         if let Some(file) = File::open("sstable.txt").ok() {
             let reader = BufReader::new(file);
 
+            let mut last_value: Option<String> = None;
+
             for row_result in reader.lines() {
                 if let Ok(row) =  row_result {
                     if let Some((key_saved, value_saved)) = row.split_once('=') {
                         if key_saved == key {
-                            return Some(value_saved.to_string());
+                            last_value = Some(value_saved.to_string());
                         }
                     }
                 }
+            }
+            
+            if last_value.is_some() {
+                return last_value;
             }
         }
 
