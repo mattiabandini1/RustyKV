@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::fs::File;
+use std::fs::{File, OpenOptions};
 use std::io::Write;
 use std::io::{BufRead, BufReader};
 
@@ -46,7 +46,11 @@ impl MemTable {
     }
 
     pub fn flush_to_disk(&self) {
-        let mut file = File::create("sstable.txt").expect("Errors creating file");
+        let mut file = OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open("sstable.txt")
+            .expect("Critical error: unable to open or create file on disk.");
         
         for (key, value) in &self.storage {
             writeln!(file, "{}={}", key, value).expect("Errors writing in file");
