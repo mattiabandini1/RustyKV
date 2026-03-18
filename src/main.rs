@@ -6,7 +6,7 @@ mod memtable;
 use parser::{parse_command, Command};
 use memtable::MemTable;
 
-const FLUSH_THRESHOLD = 10_000;
+const FLUSH_THRESHOLD: usize = 10_000;
 
 fn main() {
 
@@ -44,14 +44,14 @@ fn main() {
         match parse_command(clear_input) {
             Command::Set(key, value) => {
                 db.set(key, value);
-                println!("key and value setted!");
+                println!("Key and value successfully set!");
 
-                if db.len() >= FLUSH_THRESHOLD {
+                if db.len() >= FLUSH_THRESHOLD { 
                     println!("MemTable full! Flush to disk in progress...");
                     db.flush_to_disk();
                     db = MemTable::new();
 
-                    println!("Download completed. Memtable free!");
+                    println!("Flush completed. Memtable cleared!");
                 }
             },
             Command::Get(key) => {

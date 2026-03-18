@@ -1,2 +1,3 @@
 /target
 sstable.txt
+.conform*
