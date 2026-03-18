@@ -40,13 +40,24 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_parse_set_command_valido() {
+    fn test_parse_set_command_valid() {
         let input = "SET user1 password123";
         let result = parse_command(input);
         
         assert_eq!(
             result, 
             Command::Set("user1".to_string(), "password123".to_string())
+        );
+    }
+
+    #[test]
+    fn test_parse_get_command_valid() {
+        let input = "GET user1";
+        let result = parse_command(input);
+        
+        assert_eq!(
+            result, 
+            Command::Get("user1".to_string())
         );
     }
 }
