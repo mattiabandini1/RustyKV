@@ -34,3 +34,19 @@ pub fn parse_command(input: &str) -> Command {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_set_command_valido() {
+        let input = "SET user1 password123";
+        let result = parse_command(input);
+        
+        assert_eq!(
+            result, 
+            Command::Set("user1".to_string(), "password123".to_string())
+        );
+    }
+}
