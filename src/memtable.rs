@@ -63,3 +63,21 @@ impl MemTable {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_memtable_set_and_get_in_memory() {
+        let mut db = MemTable::new();
+        
+        db.set("test_key".to_string(), "test_value".to_string());
+
+        let result = db.get("test_key");
+        assert_eq!(result, Some("test_value".to_string()));
+
+        let missing = db.get("ghost_key");
+        assert_eq!(missing, None);
+    }
+}
