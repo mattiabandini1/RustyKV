@@ -60,4 +60,12 @@ mod tests {
             Command::Get("user1".to_string())
         );
     }
+
+    #[test]
+    fn test_parse_command_unknown() {
+        let input = "DESTROY all db";
+        let result = parse_command(input);
+        
+        assert_eq!(result, Command::Unknown);
+    }
 }
